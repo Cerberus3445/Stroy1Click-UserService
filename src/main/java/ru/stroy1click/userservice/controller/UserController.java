@@ -13,6 +13,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.stroy1click.userservice.dto.UserDto;
 import ru.stroy1click.userservice.exception.ValidationException;
+import ru.stroy1click.userservice.model.ConfirmEmailRequest;
+import ru.stroy1click.userservice.model.UpdatePasswordRequest;
 import ru.stroy1click.userservice.service.UserService;
 
 import java.util.List;
@@ -27,13 +29,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get user")
+    @Operation(summary = "Получение пользователя.")
     public UserDto get(@PathVariable("id") Long id){
         return this.userService.get(id);
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update user")
+    @Operation(summary = "Обновление пользователя.")
     public ResponseEntity<String> update(@PathVariable("id") Long id, @RequestBody @Valid UserDto userDto, BindingResult bindingResult){
         if(bindingResult.hasFieldErrors()) throw new ValidationException(collectErrorsToString(bindingResult.getFieldErrors()));
 
@@ -42,10 +44,31 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete user")
+    @Operation(summary = "Удаление пользователя.")
     public ResponseEntity<String> delete(@PathVariable("id") Long id){
         this.userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body("User has been deleted.");
+    }
+
+    @PatchMapping("/email-status")
+    @Operation(summary = "Подтвердить email.")
+    public ResponseEntity<String> updateEmailConfirmedStatus(@RequestBody @Valid ConfirmEmailRequest confirmEmailRequest,
+                                                             BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()) throw new ValidationException(collectErrorsToString(bindingResult.getFieldErrors()));
+
+        this.userService.updateEmailConfirmedStatus(confirmEmailRequest.getEmail());
+        return ResponseEntity.ok("Email успешно подтверждён.");
+    }
+
+    @PatchMapping("/password")
+    @Operation(summary = "Обновить пароль.")
+    public ResponseEntity<String> updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest,
+                                                 BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()) throw new ValidationException(collectErrorsToString(bindingResult.getFieldErrors()));
+
+        this.userService.updatePassword(updatePasswordRequest.getEmail(),
+                updatePasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Пароль был успешно изменён.");
     }
 
     private String collectErrorsToString(List<FieldError> fieldErrors){
