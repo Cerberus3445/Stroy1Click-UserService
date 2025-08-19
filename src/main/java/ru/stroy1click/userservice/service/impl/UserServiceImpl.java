@@ -41,14 +41,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void create(UserDto userDto) {
-        log.info("create {}", userDto);
-        userDto.setEmailConfirmed(false);
-        this.userRepository.save(this.userMapper.toEntity(userDto));
-    }
-
-    @Override
-    @Transactional
     @CacheEvict(value = "user", key = "#id")
     public void update(Long id, UserDto userDto) {
         log.info("update {}, {}", id, userDto);
