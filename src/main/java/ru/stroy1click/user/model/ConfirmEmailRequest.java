@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConfirmEmailRequest {
 
-    @Email(message = "Электронная почта должна быть валидной")
-    @NotBlank(message = "Электронная почта не может быть пустой")
+    @Email(message = "{validation.confirm_email_request.email.valid}")
+    @NotBlank(message = "{validation.confirm_email_request.email.not_blank}")
     private String email;
 }
