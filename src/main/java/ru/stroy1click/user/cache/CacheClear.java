@@ -16,8 +16,18 @@ public class CacheClear {
     public void clearUserById(Long id){ //check usages
         log.info("clearUser");
         Cache cache = this.cacheManager.getCache("user");
+        deleteCache(cache,id);
+    }
+
+    public void clearEmail(String email){
+        log.info("clearEmail {}", email);
+        Cache cache = this.cacheManager.getCache("email");
+        deleteCache(cache,email);
+    }
+
+    private void deleteCache(Cache cache, Object key){
         if(cache != null){
-            cache.evict(id);
+            cache.evict(key);
         }
     }
 

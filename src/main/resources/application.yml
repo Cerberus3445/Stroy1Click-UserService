@@ -18,6 +18,9 @@ spring:
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+  messages:
+    basename: messages
+    encoding: UTF-8
 
 server:
   port: 8080

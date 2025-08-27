@@ -58,6 +58,8 @@ public class UserServiceImpl implements UserService {
         }, () -> {
             throw new NotFoundException(id);
         });
+
+        this.cacheClear.clearEmail(userDto.getEmail());
     }
 
     @Override
@@ -65,15 +67,18 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "user", key = "#id")
     public void delete(Long id) {
         log.info("delete {}", id);
-        this.userRepository.findById(id).orElseThrow(
+        User user = this.userRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(id)
         );
 
         this.userRepository.deleteById(id);
+        this.cacheClear.clearEmail(user.getEmail());
     }
 
     @Override
+    @Cacheable(value = "email", key = "#email")
     public UserDto getByEmail(String email) {
+        log.info("getByEmail {}", email);
         return this.userMapper.toDto(this.userRepository.findByEmail(email).orElseThrow(
                 () -> new NotFoundException(email)
         ));
@@ -87,6 +92,7 @@ public class UserServiceImpl implements UserService {
         user.setEmailConfirmed(true);
 
         this.cacheClear.clearUserById(user.getId());
+        this.cacheClear.clearEmail(email);
     }
 
     @Override
@@ -97,6 +103,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(this.passwordEncoder.encode(newPassword));
 
         this.cacheClear.clearUserById(user.getId());
+        this.cacheClear.clearEmail(email);
     }
 }
 
