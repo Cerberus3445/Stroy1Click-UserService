@@ -1,10 +1,11 @@
-package ru.stroy1click.user.model;
+package ru.stroy1click.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.stroy1click.user.model.Role;
 
 @Data
 @Entity

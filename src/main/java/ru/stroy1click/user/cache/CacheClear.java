@@ -15,20 +15,18 @@ public class CacheClear {
 
     public void clearUserById(Long id){ //check usages
         log.info("clearUser");
-        Cache cache = this.cacheManager.getCache("user");
-        deleteCache(cache,id);
+        deleteCache("user",id);
     }
 
     public void clearEmail(String email){
         log.info("clearEmail {}", email);
-        Cache cache = this.cacheManager.getCache("email");
-        deleteCache(cache,email);
+        deleteCache("email",email);
     }
 
-    private void deleteCache(Cache cache, Object key){
+    private void deleteCache(String key, Object value){
+        Cache cache = this.cacheManager.getCache(key);
         if(cache != null){
-            cache.evict(key);
+            cache.evict(value);
         }
     }
-
 }
