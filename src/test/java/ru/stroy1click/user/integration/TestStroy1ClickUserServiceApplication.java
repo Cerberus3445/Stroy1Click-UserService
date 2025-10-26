@@ -1,6 +1,7 @@
-package ru.stroy1click.user;
+package ru.stroy1click.user.integration;
 
 import org.springframework.boot.SpringApplication;
+import ru.stroy1click.user.Stroy1ClickUserServiceApplication;
 
 public class TestStroy1ClickUserServiceApplication {
 

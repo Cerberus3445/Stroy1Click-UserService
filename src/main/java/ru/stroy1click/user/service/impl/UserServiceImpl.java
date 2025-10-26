@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.stroy1click.user.cache.CacheClear;
 import ru.stroy1click.user.dto.UserDto;
 import ru.stroy1click.user.exception.NotFoundException;
 import ru.stroy1click.user.mapper.UserMapper;
-import ru.stroy1click.user.model.User;
+import ru.stroy1click.user.entity.User;
 import ru.stroy1click.user.repository.UserRepository;
 import ru.stroy1click.user.service.UserService;
 
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final CacheClear cacheClear;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Cacheable(value = "user", key = "#id")

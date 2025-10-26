@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.stroy1click.user.dto.UserDto;
-import ru.stroy1click.user.model.User;
+import ru.stroy1click.user.entity.User;
 
 @Component
 @RequiredArgsConstructor
