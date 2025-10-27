@@ -22,6 +22,10 @@ spring:
     basename: messages
     encoding: UTF-8
 
+logging:
+  file:
+    path: logs
+
 server:
   port: 8080
 web:
