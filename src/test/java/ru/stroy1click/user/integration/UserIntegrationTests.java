@@ -42,7 +42,6 @@ class UserIntegrationTests {
         Assertions.assertEquals(updatedUserDto.getFirstName(), userDto.getFirstName());
     }
 
-
     @Test
     public void getUser_ById_ReturnsUserDto() {
         ResponseEntity<UserDto> responseEntity = this.testRestTemplate.exchange(
