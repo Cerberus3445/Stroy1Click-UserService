@@ -37,9 +37,9 @@ public class UserController {
         return this.userService.get(id);
     }
 
-    @GetMapping
+    @GetMapping("/email")
     @Operation(summary = "Получение пользователя по электронной почте.")
-    public UserDto get(@RequestParam("email") String email){
+    public UserDto getByEmail(@RequestParam("email") String email){
         return this.userService.getByEmail(email);
     }
 

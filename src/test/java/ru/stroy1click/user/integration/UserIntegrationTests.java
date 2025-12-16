@@ -56,6 +56,35 @@ class UserIntegrationTests {
     }
 
     @Test
+    public void getUser_ByEmail_ReturnsUserDto() {
+        String email = "mike_thompson@gmail.com";
+        ResponseEntity<UserDto> responseEntity = this.testRestTemplate.exchange(
+                "/api/v1/users/email?email=" + email,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                UserDto.class
+        );
+
+        Assertions.assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals("Mike", responseEntity.getBody().getFirstName());
+    }
+
+    @Test
+    public void getUserByEmail_WhenEmailNotFound_ReturnsNotFound() {
+        String email = "notfound@gmail.com";
+        ResponseEntity<ProblemDetail> responseEntity = this.testRestTemplate.exchange(
+                "/api/v1/users/email?email=" + email,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                ProblemDetail.class
+        );
+
+        Assertions.assertTrue(responseEntity.getStatusCode().is4xxClientError());
+        Assertions.assertEquals("Пользователь с электронной почтой %s не найден".formatted(email),
+                responseEntity.getBody().getDetail());
+    }
+
+    @Test
     public void deleteUser_WithValidId_ReturnsSuccessMessage() {
         ResponseEntity<String> responseEntity = this.testRestTemplate.exchange(
                 "/api/v1/users/3",

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,8 @@ import ru.stroy1click.user.mapper.UserMapper;
 import ru.stroy1click.user.entity.User;
 import ru.stroy1click.user.repository.UserRepository;
 import ru.stroy1click.user.service.UserService;
+
+import java.util.Locale;
 
 @Slf4j
 @Service
@@ -30,12 +33,20 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final MessageSource messageSource;
+
     @Override
     @Cacheable(value = "user", key = "#id")
     public UserDto get(Long id) {
         log.info("get {}", id);
         return this.userMapper.toDto(this.userRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(id))
+                () -> new NotFoundException(
+                        this.messageSource.getMessage(
+                                "error.user.not_found_id",
+                                new Object[]{id},
+                                Locale.getDefault()
+                        )
+                ))
         );
     }
 
@@ -56,7 +67,13 @@ public class UserServiceImpl implements UserService {
                     .build();
             this.userRepository.save(newUser);
         }, () -> {
-            throw new NotFoundException(id);
+            throw new NotFoundException(
+                    this.messageSource.getMessage(
+                            "error.user.not_found_id",
+                            new Object[]{id},
+                            Locale.getDefault()
+                    )
+            );
         });
 
         this.cacheClear.clearEmail(userDto.getEmail());
@@ -68,7 +85,13 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         log.info("delete {}", id);
         User user = this.userRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(id)
+                () -> new NotFoundException(
+                        this.messageSource.getMessage(
+                                "error.user.not_found_id",
+                                new Object[]{id},
+                                Locale.getDefault()
+                        )
+                )
         );
 
         this.userRepository.deleteById(id);
@@ -80,7 +103,13 @@ public class UserServiceImpl implements UserService {
     public UserDto getByEmail(String email) {
         log.info("getByEmail {}", email);
         return this.userMapper.toDto(this.userRepository.findByEmail(email).orElseThrow(
-                () -> new NotFoundException(email)
+                () -> new NotFoundException(
+                        this.messageSource.getMessage(
+                                "error.user.not_found_email",
+                                new Object[]{email},
+                                Locale.getDefault()
+                        )
+                )
         ));
     }
 
@@ -88,7 +117,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateEmailConfirmedStatus(String email) {
         User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException(email));
+                .orElseThrow(() -> new NotFoundException(
+                        this.messageSource.getMessage(
+                                "error.user.not_found_email",
+                                new Object[]{email},
+                                Locale.getDefault()
+                        )
+                ));
         user.setEmailConfirmed(true);
 
         this.cacheClear.clearUserById(user.getId());
@@ -99,7 +134,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updatePassword(String email, String newPassword) {
         User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException(email));
+                .orElseThrow(() -> new NotFoundException(
+                        this.messageSource.getMessage(
+                                "error.user.not_found_email",
+                                new Object[]{email},
+                                Locale.getDefault()
+                        )
+                ));
         user.setPassword(this.passwordEncoder.encode(newPassword));
 
         this.cacheClear.clearUserById(user.getId());
