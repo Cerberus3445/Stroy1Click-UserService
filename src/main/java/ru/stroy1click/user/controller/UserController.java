@@ -16,6 +16,7 @@ import ru.stroy1click.user.model.ConfirmEmailRequest;
 import ru.stroy1click.user.model.UserServiceUpdatePasswordRequest;
 import ru.stroy1click.user.service.UserService;
 import ru.stroy1click.user.util.ValidationErrorUtils;
+import ru.stroy1click.user.validator.UserCreateValidator;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,8 @@ import java.util.Locale;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserCreateValidator userCreateValidator;
 
     private final MessageSource messageSource;
 
@@ -43,6 +46,25 @@ public class UserController {
         return this.userService.getByEmail(email);
     }
 
+    @PostMapping
+    @Operation(summary = "Создание пользователя.")
+    public ResponseEntity<String> create(@RequestBody @Valid UserDto userDto, BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()) throw new ValidationException(ValidationErrorUtils.collectErrorsToString(
+                bindingResult.getFieldErrors()
+        ));
+
+        this.userCreateValidator.validate(userDto.getEmail());
+
+        this.userService.create(userDto);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                this.messageSource.getMessage(
+                        "info.user.created",
+                        null,
+                        Locale.getDefault()
+                )
+        );
+    }
+
     @PatchMapping("/{id}")
     @Operation(summary = "Обновление пользователя.")
     public ResponseEntity<String> update(@PathVariable("id") Long id, @RequestBody @Valid UserDto userDto, BindingResult bindingResult){
@@ -53,7 +75,7 @@ public class UserController {
         this.userService.update(id, userDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 this.messageSource.getMessage(
-                        "info.user.update",
+                        "info.user.updated",
                         null,
                         Locale.getDefault()
                 )
@@ -66,7 +88,7 @@ public class UserController {
         this.userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 this.messageSource.getMessage(
-                        "info.user.delete",
+                        "info.user.deleted",
                         null,
                         Locale.getDefault()
                 )

@@ -49,6 +49,20 @@ public class AdviceController {
         return problemDetail;
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ProblemDetail problemDetail(AlreadyExistsException exception){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle(
+                this.messageSource.getMessage(
+                        "error.title.already_exist",
+                        null,
+                        Locale.getDefault()
+                )
+        );
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
     @ExceptionHandler(AuthorizationException.class)
     public ProblemDetail handleException(AuthorizationException exception){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
