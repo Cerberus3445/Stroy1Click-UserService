@@ -26,6 +26,18 @@ spring:
     basename: messages
     encoding: UTF-8
 
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
 otel:
   service:
     name: "user-service"
@@ -42,10 +54,6 @@ otel:
     otlp:
       protocol: "grpc"
       endpoint: "http://localhost:4317"
-
-logging:
-  file:
-    path: logs
 
 server:
   port: 8080

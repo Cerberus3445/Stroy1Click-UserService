@@ -52,6 +52,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void create(UserDto userDto) {
+        log.info("create {}", userDto);
+
+        userDto.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
+
+        this.userRepository.save(
+                this.userMapper.toEntity(userDto)
+        );
+    }
+
+    @Override
+    @Transactional
     @CacheEvict(value = "user", key = "#id")
     public void update(Long id, UserDto userDto) {
         log.info("update {}, {}", id, userDto);
@@ -60,7 +72,7 @@ public class UserServiceImpl implements UserService {
                     .id(user.getId())
                     .firstName(userDto.getFirstName())
                     .lastName(userDto.getLastName())
-                    .password(userDto.getPassword())
+                    .password(user.getPassword())
                     .emailConfirmed(user.getEmailConfirmed())
                     .email(user.getEmail())
                     .role(user.getRole())
@@ -111,6 +123,13 @@ public class UserServiceImpl implements UserService {
                         )
                 )
         ));
+    }
+
+    @Override
+    public Boolean existsUserByEmail(String email) {
+        log.info("existsUserByEmail {}", email);
+
+        return this.userRepository.existsUserByEmail(email);
     }
 
     @Override
