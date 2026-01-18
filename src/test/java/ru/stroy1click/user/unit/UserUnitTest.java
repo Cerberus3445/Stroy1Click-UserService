@@ -69,8 +69,6 @@ public class UserUnitTest {
         this.userDto.setPassword("password");
     }
 
-    // ---------- get ----------
-
     @Test
     void get_ShouldReturnUserDto_WhenUserExists() {
         when(this.userRepository.findById(1L))
