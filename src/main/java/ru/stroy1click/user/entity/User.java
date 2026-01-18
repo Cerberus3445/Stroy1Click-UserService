@@ -10,7 +10,7 @@ import ru.stroy1click.user.model.Role;
 @Data
 @Entity
 @Builder
-@Table(schema = "auth", name = "users")
+@Table(schema = "account", name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {

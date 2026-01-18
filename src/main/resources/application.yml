@@ -22,6 +22,11 @@ spring:
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+  flyway:
+    url: jdbc:postgresql://localhost:5433/stroy1click
+    user: postgres
+    password: password
+    baseline-on-migrate: true
   messages:
     basename: messages
     encoding: UTF-8

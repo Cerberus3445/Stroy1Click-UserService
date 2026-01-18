@@ -18,6 +18,7 @@ import ru.stroy1click.user.service.UserService;
 import ru.stroy1click.user.util.ValidationErrorUtils;
 import ru.stroy1click.user.validator.UserCreateValidator;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,21 +49,18 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "Создание пользователя.")
-    public ResponseEntity<String> create(@RequestBody @Valid UserDto userDto, BindingResult bindingResult){
+    public ResponseEntity<UserDto> create(@RequestBody @Valid UserDto userDto, BindingResult bindingResult){
         if(bindingResult.hasFieldErrors()) throw new ValidationException(ValidationErrorUtils.collectErrorsToString(
                 bindingResult.getFieldErrors()
         ));
 
         this.userCreateValidator.validate(userDto.getEmail());
 
-        this.userService.create(userDto);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                this.messageSource.getMessage(
-                        "info.user.created",
-                        null,
-                        Locale.getDefault()
-                )
-        );
+        UserDto createdUser = this.userService.create(userDto);
+
+        return ResponseEntity
+                .created(URI.create("/api/v1/users/" + createdUser.getId()))
+                .body(createdUser);
     }
 
     @PatchMapping("/{id}")

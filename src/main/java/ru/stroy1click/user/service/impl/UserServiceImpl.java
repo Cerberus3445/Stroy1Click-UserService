@@ -52,14 +52,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void create(UserDto userDto) {
+    public UserDto create(UserDto userDto) {
         log.info("create {}", userDto);
 
         userDto.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
 
-        this.userRepository.save(
+        User createdUser = this.userRepository.save(
                 this.userMapper.toEntity(userDto)
         );
+
+        return this.userMapper.toDto(createdUser);
     }
 
     @Override

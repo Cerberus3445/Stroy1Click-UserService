@@ -18,14 +18,40 @@ class UserIntegrationTests {
     private TestRestTemplate testRestTemplate;
 
     @Test
+    public void createUser_WithValidData_ReturnsCreatedUser(){
+        UserDto userDto = new UserDto(null, "firstName", "lastName", "email@gmail.com", "password", false, Role.ROLE_USER);
+        HttpEntity<UserDto> createEntity = new HttpEntity<>(userDto);
+
+        ResponseEntity<UserDto> responseEntity = this.testRestTemplate.exchange(
+                "/api/v1/users",
+                HttpMethod.POST,
+                createEntity,
+                UserDto.class
+        );
+
+        Assertions.assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+        Assertions.assertNotNull(responseEntity.getHeaders().getLocation());
+
+        UserDto createUser = this.testRestTemplate.exchange(
+                responseEntity.getHeaders().getLocation(),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                UserDto.class
+        ).getBody();
+
+        Assertions.assertNotNull(createUser.getId());
+        Assertions.assertEquals(userDto.getFirstName(),createUser.getFirstName());
+    }
+
+    @Test
     public void updateUser_WithValidData_ReturnsSuccessMessage() {
         UserDto userDto = new UserDto(null, "newFirstName", "lastName", "email@gmail.com", "password", false, Role.ROLE_USER);
-        HttpEntity<UserDto> createEntity = new HttpEntity<>(userDto);
+        HttpEntity<UserDto> updatedEntity = new HttpEntity<>(userDto);
 
         ResponseEntity<String> responseEntity = this.testRestTemplate.exchange(
                 "/api/v1/users/2",
                 HttpMethod.PATCH,
-                createEntity,
+                updatedEntity,
                 String.class
         );
 

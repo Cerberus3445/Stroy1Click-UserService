@@ -7,7 +7,7 @@ public interface UserService {
 
     UserDto get(Long id);
 
-    void create(UserDto userDto);
+    UserDto create(UserDto userDto);
 
     void update(Long id, UserDto userDto);
 
